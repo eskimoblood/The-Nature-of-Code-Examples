@@ -15,14 +15,16 @@ function Mover(canvas, paint) {
   this.paint = paint;
   this.location = new plask.Vec2(canvas.width / 2, canvas.height / 2);
   this.velocity = new plask.Vec2(0, 0);
-  this.topspeed = 6;
+  this.topspeed = 5;
 }
 
 Mover.prototype = {
-  update: function() {
-    var angle = Math.random() * Math.PI * 2;
-    var acceleration = new plask.Vec2(Math.cos(angle), Math.sin(angle));
-    acceleration.scale(Math.random() * 2);
+  update: function(mouseX, mouseY) {
+    var mouse = new plask.Vec2(mouseX, mouseY);
+    var acceleration = mouse.subbed(this.location);
+
+    acceleration.normalize();
+    acceleration.scale(0.2);
 
     this.velocity.add(acceleration);
     this.velocity.x = Math.min(this.velocity.x, this.topspeed);
@@ -35,23 +37,6 @@ Mover.prototype = {
     this.paint.setColor(0, 0, 0);
     this.paint.setStrokeWidth(2);
     this.canvas.drawCircle(this.paint, this.location.x, this.location.y, 48, 48);
-  },
-
-  checkEdges: function() {
-
-    if (this.location.x > this.canvas.width) {
-      this.location.x = 0;
-    }
-    else if (this.location.x < 0) {
-      this.location.x = this.canvas.width;
-    }
-
-    if (this.location.y > this.canvas.height) {
-      this.location.y = 0;
-    }
-    else if (this.location.y < 0) {
-      this.location.y = this.canvas.height;
-    }
   }
 };
 
@@ -69,14 +54,23 @@ plask.simpleWindow({
     this.framerate(30);
 
     this.mover = new Mover(this.canvas, paint);
+
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    this.on('mouseMoved', function(e) {
+      this.mouseX = e.x;
+      this.mouseY = e.y;
+    });
   },
 
   draw: function() {
     var canvas = this.canvas, paint = this.paint;
     canvas.clear(255, 255, 255);
 
-    this.mover.update();
-    this.mover.checkEdges();
+    // Update the location
+    this.mover.update(this.mouseX, this.mouseY);
+    // Display the Mover
     this.mover.display();
   }
 });

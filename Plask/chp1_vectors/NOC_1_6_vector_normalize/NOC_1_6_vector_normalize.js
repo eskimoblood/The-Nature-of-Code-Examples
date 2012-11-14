@@ -17,6 +17,8 @@ plask.simpleWindow({
 
   init: function() {
     var paint = this.paint;
+    var canvas = this.canvas;
+
     paint.setAntiAlias(true);
     this.framerate(30);
 
@@ -41,10 +43,10 @@ plask.simpleWindow({
     mouse.sub(center);
 
     // Normalize the vector
-    mouse.normalize()
+    mouse.normalize();
 
     // Multiply its length by 150
-    mouse.scale(150)
+    mouse.scale(150);
 
     // Draw the resulting vector
     paint.setStroke();

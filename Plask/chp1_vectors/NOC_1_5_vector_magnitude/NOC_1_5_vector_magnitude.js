@@ -3,29 +3,53 @@
 // Draft book
 
 // Example 1-5: Vector magnitude
+var plask = require('plask');
 
-void setup() {
-  size(800,200);
-  smooth();
-}
+plask.simpleWindow({
 
-void draw() {
-  background(255);
-  
-  PVector mouse = new PVector(mouseX,mouseY);
-  PVector center = new PVector(width/2,height/2);
-  mouse.sub(center);
+  settings: {
+    width: 800,
+    height: 200
+  },
 
-  float m = mouse.mag();
-  fill(0);
-  noStroke();
-  rect(0,0,m,10);
-  
-  translate(width/2,height/2);
-  stroke(0);
-  strokeWeight(2);
-  line(0,0,mouse.x,mouse.y);
-  
-}
+  init: function() {
+    var paint = this.paint;
 
+    paint.setAntiAlias(true);
+    this.framerate(30);
+
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    this.on('mouseMoved', function(e) {
+      this.mouseX = e.x;
+      this.mouseY = e.y;
+    });
+
+  },
+
+  draw: function() {
+    var canvas = this.canvas;
+    var paint = this.paint;
+
+    canvas.clear(255, 255, 255);
+
+    var mouse = new plask.Vec2(this.mouseX, this.mouseY);
+    var center = new plask.Vec2(canvas.width / 2, canvas.height / 2);
+    mouse.sub(center);
+
+    var m = mouse.length();
+    paint.setFill();
+    paint.setColor(0, 0, 0);
+    canvas.drawRect(paint, 0, 0, m, 10);
+
+    canvas.save();
+    canvas.translate(canvas.width / 2, canvas.height / 2);
+    paint.setStroke();
+    paint.setColor(0, 0, 0);
+    paint.setStrokeWidth(2);
+    canvas.drawLine(paint, 0, 0, mouse.x, mouse.y);
+    canvas.restore();
+  }
+});
 

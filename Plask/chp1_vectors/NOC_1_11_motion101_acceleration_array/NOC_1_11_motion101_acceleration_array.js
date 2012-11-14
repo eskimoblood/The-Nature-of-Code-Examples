@@ -13,13 +13,14 @@ var plask = require('plask');
 function Mover(canvas, paint) {
   this.canvas = canvas;
   this.paint = paint;
-  this.location = new plask.Vec2(canvas.width / 2, canvas.height / 2);
+  this.location = new plask.Vec2(Math.random() * canvas.width, Math.random() * canvas.height);
   this.velocity = new plask.Vec2(0, 0);
   this.topspeed = 5;
 }
 
 Mover.prototype = {
   update: function(mouseX, mouseY) {
+    // Compute a vector that points from location to mouse
     var mouse = new plask.Vec2(mouseX, mouseY);
     var acceleration = mouse.subbed(this.location);
 
@@ -52,8 +53,10 @@ plask.simpleWindow({
     var paint = this.paint;
     paint.setAntiAlias(true);
     this.framerate(30);
-
-    this.mover = new Mover(this.canvas, paint);
+    this.movers = [];
+    for (var i = 0; i < 20; i++) {
+      this.movers.push(new Mover(this.canvas, paint));
+    }
 
     this.mouseX = 0;
     this.mouseY = 0;
@@ -65,38 +68,18 @@ plask.simpleWindow({
   },
 
   draw: function() {
-    var canvas = this.canvas, paint = this.paint;
+    var canvas = this.canvas;
+
     canvas.clear(255, 255, 255);
 
-    // Update the location
-    this.mover.update(this.mouseX, this.mouseY);
-    // Display the Mover
-    this.mover.display();
+    this.movers.forEach(function(mover) {
+      mover.update(this.mouseX, this.mouseY);
+      mover.display();
+    }, this)
+
   }
 });
 
 
-
-
-
-Mover[] movers = new Mover[20];
-
-void setup() {
-  size(800,200);
-  smooth();
-  for (int i = 0; i < movers.length; i++) {
-    movers[i] = new Mover();
-  }
-}
-
-void draw() {
-
-  background(255);
-
-  for (int i = 0; i < movers.length; i++) {
-    movers[i].update();
-    movers[i].display();
-  }
-}
 
 
