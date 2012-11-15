@@ -1,12 +1,12 @@
 var plask = require('plask');
 
-function Mover(canvas, paint) {
+function Mover(canvas, paint, mass, x, y) {
   this.canvas = canvas;
   this.paint = paint;
-  this.location = new plask.Vec2(30, 30);
+  this.mass = mass;
+  this.location = new plask.Vec2(x, y);
   this.velocity = new plask.Vec2(0, 0);
   this.acceleration = new plask.Vec2(0, 0);
-  this.mass = 1;
 }
 
 Mover.prototype = {
@@ -25,7 +25,7 @@ Mover.prototype = {
     this.paint.setStroke();
     this.paint.setColor(0, 0, 0);
     this.paint.setStrokeWidth(2);
-    this.canvas.drawCircle(this.paint, this.location.x, this.location.y, 48, 48);
+    this.canvas.drawCircle(this.paint, this.location.x, this.location.y, this.mass * 16, this.mass * 16);
   },
 
   checkEdges: function() {
@@ -58,28 +58,33 @@ plask.simpleWindow({
     paint.setAntiAlias(true);
     this.framerate(30);
 
-    this.mover = new Mover(this.canvas, paint);
+    this.movers = [];
+    for (var i = 0; i < 20; i++) {
+      var mass = .1 + Math.random() * 3;
+      this.movers.push(new Mover(this.canvas, paint, mass, 0, 0));
+    }
+
   },
 
   draw: function() {
     var canvas = this.canvas, paint = this.paint;
     canvas.clear(255, 255, 255);
 
-
     var wind = new plask.Vec2(0.01, 0);
     var gravity = new plask.Vec2(0, 0.1);
 
-    this.mover.applyForce(wind);
-    this.mover.applyForce(gravity);
+    for (var i = 0; i < this.movers.length; i++) {
+      var mover = this.movers[i];
 
-    // Update the location
-    this.mover.update(this.mouseX, this.mouseY);
-    // Display the Mover
-    this.mover.display();
-    this.mover.checkEdges();
+      mover.applyForce(wind);
+      mover.applyForce(gravity);
+
+      mover.update();
+      mover.display();
+      mover.checkEdges();
+    }
   }
 });
-
 
 
 
