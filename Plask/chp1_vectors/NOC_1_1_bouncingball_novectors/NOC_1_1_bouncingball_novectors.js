@@ -26,7 +26,8 @@ plask.simpleWindow({
     },
 
     draw: function() {
-      var canvas = this.canvas, paint = this.paint;
+      var canvas = this.canvas;
+      var paint = this.paint;
       canvas.clear(255, 255, 255);
 
       // Add the current speed to the location.
